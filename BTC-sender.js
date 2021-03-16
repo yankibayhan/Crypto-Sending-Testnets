@@ -1,0 +1,137 @@
+
+// Libraries to use
+var bitcore = require('bitcore-lib');
+
+// Using axios to import sochain api
+var axios = require('axios');
+
+
+// SEND BTC
+const sendBitcoin = async (recieverAddress, amountToSend) => {
+    const sochain_network = "BTCTEST";
+    const privateKey = "92zxU1Sz8feY5pswsfEyrZyyH6o7T9tHgBhWY3VUrCDV9ynbZSo";
+    const sourceAddress = "mySLuwi58jC2r1yXtbuehUWwY9Ta71A8bh";
+    const satoshiToSend = amountToSend * 100000000;
+    let fee = 0;
+    let inputCount = 0;
+    let outputCount = 2;
+    const utxos = await axios.get(
+      `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${sourceAddress}`
+    );
+    const transaction = new bitcore.Transaction();
+    let totalAmountAvailable = 0;
+  
+    let inputs = [];
+    utxos.data.data.txs.forEach(async (element) => {
+      let utxo = {};
+      utxo.satoshis = Math.floor(Number(element.value) * 100000000);
+      utxo.script = element.script_hex;
+      utxo.address = utxos.data.data.address;
+      utxo.txId = element.txid;
+      utxo.outputIndex = element.output_no;
+      totalAmountAvailable += utxo.satoshis;
+      inputCount += 1;
+      inputs.push(utxo);
+    });
+  
+    transactionSize = inputCount * 146 + outputCount * 34 + 10 - inputCount;
+    // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
+  
+    fee = transactionSize * 20
+    if (totalAmountAvailable - satoshiToSend - fee  < 0) {
+      throw new Error("Balance is too low for this transaction");
+    }
+  
+    //Set transaction input
+    transaction.from(inputs);
+  
+    // set the recieving address and the amount to send
+    transaction.to(recieverAddress, satoshiToSend);
+  
+    // Set change address - Address to receive the left over funds after transfer
+    transaction.change(sourceAddress);
+  
+    //manually set transaction fees: 20 satoshis per byte
+    transaction.fee(fee * 20);
+  
+    // Sign transaction with your private key
+    transaction.sign(privateKey);
+  
+    // serialize Transactions
+    const serializedTransaction = transaction.serialize();
+    // Send transaction
+    const result = await axios({
+      method: "POST",
+      url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
+      data: {
+        tx_hex: serializedTransaction,
+      },
+    });
+    return result.data.data;
+  };
+
+
+// Send LTC 
+const sendLTC = async (ltc_reciever, ltc_amountToSend) => {
+
+  const sochain_network = "LTCTEST";
+    const ltc_privateKey = "7feae43e44863c5cb64b05f8052527752a599b3c1c4a37e8dcd39bf990f35fa3";
+    const ltc_sourceAddress = "muNcpiUHxiuTrRsuW7rnuqMyaT7Y5SMcPE";
+    const liteToSend = ltc_amountToSend * 100000000;
+    let fee = 0;
+    let inputCount = 0;
+    let outputCount = 2;
+    const utxos = await axios.get(
+      `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${sourceAddress}`
+    );
+    const transaction = new litecore.Transaction();
+    let totalAmountAvailable = 0;
+  
+    let inputs = [];
+    utxos.data.data.txs.forEach(async (element) => {
+      let utxo = {};
+      utxo.satoshis = Math.floor(Number(element.value) * 100000000);
+      utxo.script = element.script_hex;
+      utxo.address = utxos.data.data.address;
+      utxo.txId = element.txid;
+      utxo.outputIndex = element.output_no;
+      totalAmountAvailable += utxo.satoshis;
+      inputCount += 1;
+      inputs.push(utxo);
+    });
+  
+    if (totalAmountAvailable - liteToSend - fee  < 0) {
+      throw new Error("Balance is too low for this transaction");
+    }
+  
+    //Set transaction input
+    transaction.from(inputs);
+  
+    // set the recieving address and the amount to send
+    transaction.to(ltc_reciever, liteToSend);
+  
+    // Set change address - Address to receive the left over funds after transfer
+    transaction.change(ltc_sourceAddress);
+  
+    //Litecoin transaction fees: 2 satoshis per byte
+    transaction.fee(fee * 2);
+  
+    // Sign transaction with your private key
+    transaction.sign(ltc_privateKey);
+  
+    // serialize Transactions
+    const serializedTransaction = transaction.serialize();
+    // Send transaction
+    const result = await axios({
+      method: "POST",
+      url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
+      data: {
+        tx_hex: serializedTransaction,
+      },
+    });
+    return result.data.data;
+  };
+
+// BTC Sending Init
+
+// sendBitcoin('mhxWPpVvNePdVXqXwmY5PZrTSpUW7BGAZe', 0.0001);
