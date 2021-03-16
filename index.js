@@ -2,11 +2,33 @@
 // Libraries to use
 var bitcore = require('bitcore-lib');
 
-// I used axios to import sochain api
+// Using axios to import sochain api
 var axios = require('axios');
 
+// Using web3 for Ethereum testnet
+
+const Web3 = require('web3');
+const web3 = new Web3('HTTP://127.0.0.1:7545') // to connect to our development blockchain
+
+// Provider for HDWALLET ETH
+
+const Provider = require('@truffle/hdwallet-provider');
+
+// Implementing smart contract
+
+// const MyContract = require('./contracts/')
+
+// Fork Ethereum Account from Ganache
+
+// Eth Account Checking
+// const account = web3.eth.getAccounts().then(console.log);
+// const block = web3.eth.getBlockNumber().then(console.log);
+// const nodeInfo = web3.eth.getNodeInfo().then(console.log);
+
+// const eth_balance = web3.eth.getBalance("0xc6dBd350B74D608DF830574b07F7531cfd785188").then(console.log);
 
 
+// SEND BTC
 const sendBitcoin = async (recieverAddress, amountToSend) => {
     const sochain_network = "BTCTEST";
     const privateKey = "92zxU1Sz8feY5pswsfEyrZyyH6o7T9tHgBhWY3VUrCDV9ynbZSo";
@@ -70,4 +92,49 @@ const sendBitcoin = async (recieverAddress, amountToSend) => {
     return result.data.data;
   };
 
-sendBitcoin('mhxWPpVvNePdVXqXwmY5PZrTSpUW7BGAZe', 0.0001);
+var sent_amount = 0;
+
+function _sentAmount(sent_price){
+
+    return sent_amount = sent_price;
+
+
+  }
+
+// Send ETH
+const sendEthereum = async (eth_reciever_adress, eth_amountToSend) => {
+
+    const eth_source_address = '0xc6dBd350B74D608DF830574b07F7531cfd785188'; // Source ETH address
+    const eth_private_key = '3e6033b2e04d48d63e6e88a8d89934e32c9f3051b3084c112259fbe8218315cb'; // to sign transactions
+    
+    
+    
+
+    // Transaction Creation
+
+    const deploy = async () => {
+
+      console.log(`Sending a transaction from ${eth_source_address} to ${eth_reciever_adress}`)
+    }
+
+    const createTransaction = await web3.eth.accounts.signTransaction({
+
+      from: eth_source_address,
+      to : eth_reciever_adress,
+      value : web3.utils.toWei(_sentAmount(eth_amountToSend).toString(),'ether'),
+      gas: 21000,
+    },
+    eth_private_key
+    )
+
+    // Deploy transaction
+
+    const receipt = await web3.eth.sendSignedTransaction(createTransaction.rawTransaction);
+    console.log(`Transtaction successful with hash: ${receipt.transactionHash}`)
+
+    deploy();
+
+}
+
+sendEthereum('0x92D1FBadAFE874F923c32fec691De5Ec6feDB1E6', 10 );
+// sendBitcoin('mhxWPpVvNePdVXqXwmY5PZrTSpUW7BGAZe', 0.0001);
