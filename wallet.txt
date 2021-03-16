@@ -1,13 +1,22 @@
 
 
-Generated BTC adress
+Generated BTC adress (TESTNET)
 
 mySLuwi58jC2r1yXtbuehUWwY9Ta71A8bh
 
 
-Generated Private Key
+Generated Private Key (TESTNET)
 
 92zxU1Sz8feY5pswsfEyrZyyH6o7T9tHgBhWY3VUrCDV9ynbZSo
+
+
+Generated ETH adress (TESTNET)
+
+0xB95efE7546290A209011B49A4a91E7c75e72Cd81
+
+Generated ETH Private Key (TESTNET)
+
+94acb90b903bbf3ce289fa233123b2410b559302c1d972c8ce66d2c98228ee52
 
 
 
