@@ -1,4 +1,4 @@
-# crypto-sending-testnets
+# crypto-sending-testnets v0.2
 
 ## Currently Supporting
 
